@@ -31,6 +31,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
 
   @override
   Widget build(BuildContext context) {
+    print('comitted');
     return Scaffold(
       body: Center(
           child: ElevatedButton(
