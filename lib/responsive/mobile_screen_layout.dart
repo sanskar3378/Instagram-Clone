@@ -42,11 +42,11 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
     return Scaffold(
       body: PageView(
         children: [
-          const Text('feed'),
-          const Text('search'),
-          const Text('add'),
-          const Text('notifications'),
-          const Text('account'),
+          const Center(child:Text('feed')),
+          const Center(child:Text('search')),
+          const Center(child:Text('add')),
+          const Center(child:Text('notifications')),
+          const Center(child:Text('profile'))
         ],
         controller: pageController,
         onPageChanged: onPageChanged,
