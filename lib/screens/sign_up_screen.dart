@@ -3,15 +3,16 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:instagram/resources/auth_method.dart';
-import 'package:instagram/responsive/mobile_screen_layout.dart';
-import 'package:instagram/responsive/responsive_layout_screen.dart';
-import 'package:instagram/responsive/web_screen_layout.dart';
-import 'package:instagram/screens/login_screen.dart';
-import 'package:instagram/utils/utils.dart';
-import 'package:instagram/widgets/text_field_input.dart';
 
+import '../resources/auth_method.dart';
+import '../responsive/mobile_screen_layout.dart';
+import '../responsive/responsive_layout_screen.dart';
+import '../responsive/web_screen_layout.dart';
+import '../screens/login_screen.dart';
+import '../utils/utils.dart';
+import '../widgets/text_field_input.dart';
 import '../utils/colors.dart';
+
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -71,8 +72,7 @@ class _SignupScreen extends State<SignupScreen> {
 
     if (res != 'sucess') {
       showSnackBar(res, context);
-    }
-    else if (res == 'enter all fields') {
+    } else if (res == 'enter all fields') {
       showSnackBar(res, context);
     } else {
       Navigator.of(context).pushReplacement(

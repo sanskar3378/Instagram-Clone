@@ -37,6 +37,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
         setState(() {
           _isLoading = false;
         });
+        _descriptionColtroller.dispose();
         clearImage();
         showSnackBar(res, context);
       } else {
