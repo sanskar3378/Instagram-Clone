@@ -10,6 +10,8 @@ class FeedScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: mobileBackgroundColor,
@@ -23,6 +25,7 @@ class FeedScreen extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () {},
+            //messenger icon
             icon: Image.network(
               'https://firebasestorage.googleapis.com/v0/b/instagram-c0882.appspot.com/o/dummydp%2Fmessenger.png?alt=media&token=dc98640c-b6aa-4a6f-a3e0-047466fdfb58',
               color: primaryColor,
@@ -32,13 +35,17 @@ class FeedScreen extends StatelessWidget {
         ],
       ),
       body: StreamBuilder(
-        stream: FirebaseFirestore.instance.collection('posts').snapshots(),
+        stream: FirebaseFirestore.instance
+            .collection('posts')
+            .orderBy('datePublished', descending: true)
+            .snapshots(),
         builder: (context,
             AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
+              //skeleton loading screen
               child: Lottie.network(
-                'https://firebasestorage.googleapis.com/v0/b/instagram-c0882.appspot.com/o/animations%2Floading.json?alt=media&token=3c78f8c6-938b-46db-b98e-d8999e6e3b00',
+                'https://firebasestorage.googleapis.com/v0/b/instagram-c0882.appspot.com/o/animations%2Fskeleton_loading.json?alt=media&token=17315d73-193b-41f0-a784-3d4ebde65bfd',
               ),
             );
           }

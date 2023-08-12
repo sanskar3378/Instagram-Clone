@@ -1,7 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:instagram/model/user.dart';
 import 'package:instagram/providers/user_provider.dart';
 import 'package:instagram/resources/firestore_methods.dart';
+import 'package:instagram/screens/comments_screen.dart';
+import 'package:instagram/utils/utils.dart';
 import 'package:instagram/widgets/like_animation.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -19,7 +22,69 @@ class PostCard extends StatefulWidget {
 }
 
 class _PostCardState extends State<PostCard> {
+  _confirmDelete() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            shape:
+                BeveledRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            alignment: Alignment.center,
+            title: const Text(
+              'Are you sure?',
+              textAlign: TextAlign.center,
+            ),
+            children: <Widget>[
+              SimpleDialogOption(
+                  padding: const EdgeInsets.all(20),
+                  child: const Text(
+                    'Yes',
+                    textAlign: TextAlign.center,
+                  ),
+                  onPressed: () async {
+                    FirestoreMethods().deletePost(widget.snap['postId']);
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                  }),
+              SimpleDialogOption(
+                padding: const EdgeInsets.all(20),
+                child: const Text(
+                  'No',
+                  textAlign: TextAlign.center,
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+  }
+
   bool isLikeAnimating = false;
+  int commentLength = 0;
+  @override
+  void initState() {
+    super.initState();
+    getComments();
+  }
+
+  void getComments() async {
+    try {
+      QuerySnapshot snap = await FirebaseFirestore.instance
+          .collection('posts')
+          .doc(widget.snap['postId'])
+          .collection('comments')
+          .get();
+
+      setState(() {
+        commentLength = snap.docs.length;
+      });
+    } catch (e) {
+      showSnackBar(e.toString(), context);
+    }
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,63 +126,101 @@ class _PostCardState extends State<PostCard> {
               IconButton(
                   onPressed: () {
                     showModalBottomSheet(
-                        showDragHandle: true,
-                        backgroundColor: const Color.fromARGB(255, 30, 30, 30),
-                        // backgroundColor: mobileBackgroundColor,
-                        shape: const BeveledRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(8),
-                                topRight: Radius.circular(8))),
-                        context: context,
-                        builder: (context) => const Padding(
-                              padding: EdgeInsets.all(4),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Option(
-                                      icon: Icon(
-                                        Icons.delete_outline_outlined,
-                                        color: Colors.red,
-                                        size: 32,
-                                      ),
-                                      title: Text(
-                                        'Delete',
-                                        style: TextStyle(
-                                            fontSize: 22, color: Colors.red),
-                                      )),
-                                  Option(
-                                      icon: Icon(
-                                        Icons.history_rounded,
-                                        size: 28,
-                                      ),
-                                      title: Text(
-                                        'Archive',
-                                        style: TextStyle(fontSize: 19),
-                                      )),
-                                  Option(
-                                      icon: Icon(
-                                        Icons.account_circle_outlined,
-                                        size: 27,
-                                      ),
-                                      title: Text(
-                                        'About this account',
-                                        style: TextStyle(fontSize: 20),
-                                      )),
-                                  Option(
-                                      icon: Icon(
-                                        Icons.report,
-                                        color: Colors.red,
-                                        size: 28,
-                                      ),
-                                      title: Text(
-                                        'Report',
-                                        style: TextStyle(
-                                            fontSize: 21, color: Colors.red),
-                                      ))
-                                ],
+                      showDragHandle: true,
+                      backgroundColor: const Color.fromARGB(255, 30, 30, 30),
+                      // backgroundColor: mobileBackgroundColor,
+                      shape: const BeveledRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(8),
+                              topRight: Radius.circular(8))),
+                      context: context,
+                      builder: (context) => Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            InkWell(
+                              borderRadius: BorderRadius.circular(8),
+                              // onTap: () async {
+                              //   // FirestoreMethods()
+                              //   //     .deletePost(widget.snap['postId']);
+                              //   // Navigator.of(context).pop();
+                              // },
+                              onTap: _confirmDelete,
+                              child: const Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(children: [
+                                  Icon(
+                                    Icons.delete_outline_outlined,
+                                    color: Colors.red,
+                                    size: 32,
+                                  ),
+                                  Text(
+                                    ' Delete',
+                                    style: TextStyle(
+                                        fontSize: 22, color: Colors.red),
+                                  ),
+                                ]),
                               ),
-                            ));
+                            ),
+                            InkWell(
+                              borderRadius: BorderRadius.circular(8),
+                              onTap: () {},
+                              child: const Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Row(children: [
+                                  Icon(
+                                    Icons.history_rounded,
+                                    size: 28,
+                                  ),
+                                  Text(
+                                    '  Archive',
+                                    style: TextStyle(fontSize: 19),
+                                  )
+                                ]),
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () {},
+                              borderRadius: BorderRadius.circular(8),
+                              child: const Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Row(children: [
+                                  Icon(
+                                    Icons.account_circle_outlined,
+                                    size: 27,
+                                  ),
+                                  Text(
+                                    '  About this account',
+                                    style: TextStyle(fontSize: 20),
+                                  )
+                                ]),
+                              ),
+                            ),
+                            InkWell(
+                              borderRadius: BorderRadius.circular(8),
+                              onTap: () {},
+                              child: const Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Row(children: [
+                                  Icon(
+                                    Icons.report,
+                                    color: Colors.red,
+                                    size: 28,
+                                  ),
+                                  Text(
+                                    '  Report',
+                                    style: TextStyle(
+                                        fontSize: 21, color: Colors.red),
+                                  )
+                                ]),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
                   },
                   icon: const Icon(Icons.more_vert_rounded))
             ],
@@ -187,7 +290,14 @@ class _PostCardState extends State<PostCard> {
                   )),
             ),
             IconButton(
-              onPressed: () {},
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => CommentScreen(
+                    snap: widget.snap,
+                  ),
+                ),
+              ),
+              //comment icon
               icon: Image.network(
                 'https://firebasestorage.googleapis.com/v0/b/instagram-c0882.appspot.com/o/dummydp%2Fcomment.png?alt=media&token=0e0de507-3fb0-41d9-ba20-d247ee770271',
                 color: Colors.white,
@@ -196,6 +306,7 @@ class _PostCardState extends State<PostCard> {
             ),
             IconButton(
               onPressed: () {},
+              //share icon
               icon: Image.network(
                 'https://firebasestorage.googleapis.com/v0/b/instagram-c0882.appspot.com/o/dummydp%2Fsend.png?alt=media&token=ed1163ef-2e4a-48a3-9b81-39d5151a1874',
                 color: primaryColor,
@@ -256,8 +367,8 @@ class _PostCardState extends State<PostCard> {
                 onTap: () {},
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: const Text(
-                    'View all 300 comments',
+                  child: Text(
+                    'View all ${commentLength} comments',
                     style: TextStyle(fontSize: 16, color: secondaryColor),
                   ),
                 ),
