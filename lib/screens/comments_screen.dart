@@ -44,12 +44,15 @@ class _CommentScreenState extends State<CommentScreen> {
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator.adaptive();
+            return const Center(
+              child: CircularProgressIndicator.adaptive(),
+            );
           }
           return ListView.builder(
             itemCount: (snapshot.data! as dynamic).docs.length,
             itemBuilder: (context, index) => CommentCard(
-                snap: (snapshot.data! as dynamic).docs[index].data()),
+              snap: (snapshot.data! as dynamic).docs[index].data(),
+            ),
           );
         },
       ),
@@ -89,7 +92,7 @@ class _CommentScreenState extends State<CommentScreen> {
                 });
               },
               child: Container(
-                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                 child: const Text(
                   'Post',
                   style: TextStyle(

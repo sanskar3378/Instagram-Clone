@@ -1,16 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:instagram/model/user.dart';
-import 'package:instagram/providers/user_provider.dart';
-import 'package:instagram/resources/firestore_methods.dart';
-import 'package:instagram/screens/comments_screen.dart';
-import 'package:instagram/utils/utils.dart';
-import 'package:instagram/widgets/like_animation.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../model/user.dart';
+import '../providers/user_provider.dart';
+import '../screens/comments_screen.dart';
+import '../resources/firestore_methods.dart';
+import '../utils/utils.dart';
+import '../widgets/like_animation.dart';
 import '../utils/colors.dart';
-import '../widgets/options.dart';
 
 class PostCard extends StatefulWidget {
   final snap;
@@ -149,7 +148,7 @@ class _PostCardState extends State<PostCard> {
                               // },
                               onTap: _confirmDelete,
                               child: const Padding(
-                                padding: const EdgeInsets.all(8.0),
+                                padding: EdgeInsets.all(8.0),
                                 child: Row(children: [
                                   Icon(
                                     Icons.delete_outline_outlined,
@@ -368,8 +367,8 @@ class _PostCardState extends State<PostCard> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: Text(
-                    'View all ${commentLength} comments',
-                    style: TextStyle(fontSize: 16, color: secondaryColor),
+                    'View all $commentLength comments',
+                    style: const TextStyle(fontSize: 16, color: secondaryColor),
                   ),
                 ),
               ),
