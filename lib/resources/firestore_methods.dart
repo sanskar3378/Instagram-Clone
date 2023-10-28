@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:instagram/model/post.dart';
 import 'package:instagram/resources/storage_methods.dart';
 import 'package:uuid/uuid.dart';
@@ -88,7 +87,7 @@ class FirestoreMethods {
           'uid': uid,
           'text': text,
           'commentId': commentId,
-          'datePublished': DateTime.now(),  
+          'datePublished': DateTime.now(),
         });
       } else {
         print('Text is empty');
@@ -105,6 +104,46 @@ class FirestoreMethods {
     try {
       await _firestore.collection('posts').doc(postId).delete();
       // Navigator.of(context).pop();
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future<void> followUser(String uid, String followId) async {
+    try {
+      DocumentSnapshot snap =
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+
+      List following = (snap.data()! as dynamic)['following'];
+
+      if (following.contains(followId)) {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(followId)
+            .update({
+          'followers': FieldValue.arrayRemove([uid])
+        });
+
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(followId)
+            .update({
+          'following': FieldValue.arrayRemove([uid])
+        });
+      } else {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(followId)
+            .update({
+          'following': FieldValue.arrayUnion([uid])
+        });
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(followId)
+            .update({
+          'followers': FieldValue.arrayUnion([uid])
+        });
+      }
     } catch (e) {
       print(e.toString());
     }
